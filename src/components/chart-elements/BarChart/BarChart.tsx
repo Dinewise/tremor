@@ -1,6 +1,6 @@
 "use client";
 import { colorPalette, getColorClassNames, tremorTwMerge } from "lib";
-import React, { useState } from "react";
+import React, { SVGProps, useState } from "react";
 
 import {
   Bar,
@@ -11,6 +11,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  BarProps,
 } from "recharts";
 
 import BaseChartProps from "../common/BaseChartProps";
@@ -25,13 +26,14 @@ import {
 } from "../common/utils";
 
 import { BaseColors, defaultValueFormatter, themeColorRange } from "lib";
-import { AxisDomain } from "recharts/types/util/types";
+import { ActiveShape, AxisDomain } from "recharts/types/util/types";
 
 const renderShape = (
   props: any,
   activeBar: any | undefined,
   activeLegend: string | undefined,
   layout: string,
+  shapeProps: SVGProps<SVGRectElement>,
 ) => {
   const { fillOpacity, name, payload, value } = props;
   let { x, width, y, height } = props;
@@ -57,6 +59,7 @@ const renderShape = (
             : 0.3
           : fillOpacity
       }
+      {...shapeProps}
     />
   );
 };
@@ -65,6 +68,8 @@ export interface BarChartProps extends BaseChartProps {
   layout?: "vertical" | "horizontal";
   stack?: boolean;
   relative?: boolean;
+  shapeProps?: SVGProps<SVGRectElement>;
+  barProps?: Omit<BarProps, 'dataKey' | 'ref'>;
 }
 
 const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>((props, ref) => {
@@ -98,6 +103,8 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>((props, ref) =>
     rotateLabelX,
     className,
     enableLegendSlider = false,
+    shapeProps = {},
+    barProps = {},
     ...other
   } = props;
   const CustomTooltip = customTooltip;
@@ -347,8 +354,10 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>((props, ref) =>
                 fill=""
                 isAnimationActive={showAnimation}
                 animationDuration={animationDuration}
-                shape={(props: any) => renderShape(props, activeBar, activeLegend, layout)}
+                activeBar={(props: any) => renderShape(props, activeBar, activeLegend, layout, shapeProps)}
+                shape={(props: any) => renderShape(props, activeBar, activeLegend, layout, shapeProps)}
                 onClick={onBarClick}
+                {...barProps}
               />
             ))}
           </ReChartsBarChart>
