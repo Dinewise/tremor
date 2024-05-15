@@ -3,6 +3,7 @@ import { BaseColors, defaultValueFormatter, themeColorRange, tremorTwMerge } fro
 import React, { useEffect } from "react";
 import {
   Pie,
+  PieProps,
   PieChart as ReChartsDonutChart,
   ResponsiveContainer,
   Sector,
@@ -36,6 +37,7 @@ export interface DonutChartProps extends BaseAnimationTimingProps {
   className?: string;
   onValueChange?: (value: EventProps) => void;
   customTooltip?: React.ComponentType<CustomTooltipProps>;
+  pieProps?: Omit<PieProps, "dataKey" | "ref">;
 }
 
 const renderInactiveShape = (props: any) => {
@@ -90,6 +92,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>((props, ref
     onValueChange,
     customTooltip,
     className,
+    pieProps = {},
     ...other
   } = props;
   const CustomTooltip = customTooltip;
@@ -177,6 +180,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>((props, ref
               activeIndex={activeIndex}
               inactiveShape={renderInactiveShape}
               style={{ outline: "none" }}
+              {...pieProps}
             />
             {/* {showTooltip ? (
               <Tooltip

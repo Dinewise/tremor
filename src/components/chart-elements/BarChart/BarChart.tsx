@@ -1,6 +1,6 @@
 "use client";
 import { colorPalette, getColorClassNames, tremorTwMerge } from "lib";
-import React, { useState } from "react";
+import React, { SVGProps, useState } from "react";
 
 import {
   Bar,
@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
   Label,
+  BarProps,
 } from "recharts";
 
 import BaseChartProps from "../common/BaseChartProps";
@@ -28,6 +29,7 @@ const renderShape = (
   activeBar: any | undefined,
   activeLegend: string | undefined,
   layout: string,
+  shapeProps: SVGProps<SVGRectElement>,
 ) => {
   const { fillOpacity, name, payload, value } = props;
   let { x, width, y, height } = props;
@@ -53,6 +55,7 @@ const renderShape = (
             : 0.3
           : fillOpacity
       }
+      {...shapeProps}
     />
   );
 };
@@ -62,6 +65,8 @@ export interface BarChartProps extends BaseChartProps {
   stack?: boolean;
   relative?: boolean;
   barCategoryGap?: string | number;
+  shapeProps?: SVGProps<SVGRectElement>;
+  barProps?: Omit<BarProps, "dataKey" | "ref">;
 }
 
 const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>((props, ref) => {
@@ -98,6 +103,8 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>((props, ref) =>
     xAxisLabel,
     yAxisLabel,
     className,
+    shapeProps = {},
+    barProps = {},
     ...other
   } = props;
   const CustomTooltip = customTooltip;
@@ -393,8 +400,14 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>((props, ref) =>
                 fill=""
                 isAnimationActive={showAnimation}
                 animationDuration={animationDuration}
-                shape={(props: any) => renderShape(props, activeBar, activeLegend, layout)}
+                shape={(props: any) =>
+                  renderShape(props, activeBar, activeLegend, layout, shapeProps)
+                }
+                activeBar={(props: any) =>
+                  renderShape(props, activeBar, activeLegend, layout, shapeProps)
+                }
                 onClick={onBarClick}
+                {...barProps}
               />
             ))}
           </ReChartsBarChart>
